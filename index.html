@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en" class="dark">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#0b0f10" />
+    <title>EcoCycle — E-Waste Recycling Protocol</title>
+    <meta
+      name="description"
+      content="A Web3 dashboard to track, donate, and recycle electronic waste. Turn old gadgets into real impact for the planet."
+    />
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Geist+Mono:wght@400;500;600&family=Geist:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            fontFamily: {
+              sans: ['Geist', 'ui-sans-serif', 'system-ui', 'sans-serif'],
+              mono: ['Geist Mono', 'ui-monospace', 'monospace'],
+            },
+            colors: {
+              background: 'var(--background)',
+              foreground: 'var(--foreground)',
+              card: 'var(--card)',
+              'card-foreground': 'var(--card-foreground)',
+              primary: 'var(--primary)',
+              'primary-foreground': 'var(--primary-foreground)',
+              secondary: 'var(--secondary)',
+              'secondary-foreground': 'var(--secondary-foreground)',
+              muted: 'var(--muted)',
+              'muted-foreground': 'var(--muted-foreground)',
+              accent: 'var(--accent)',
+              'accent-foreground': 'var(--accent-foreground)',
+              border: 'var(--border)',
+              input: 'var(--input)',
+              ring: 'var(--ring)',
+            },
+            borderRadius: {
+              lg: 'var(--radius)',
+              md: 'calc(var(--radius) * 0.8)',
+              sm: 'calc(var(--radius) * 0.6)',
+              xl: 'calc(var(--radius) * 1.4)',
+              '2xl': 'calc(var(--radius) * 1.8)',
+              '3xl': 'calc(var(--radius) * 2.2)',
+            },
+          },
+        },
+      }
+    </script>
+
+    <style type="text/css">
+      :root {
+        color-scheme: dark;
+
+        --background: oklch(0.16 0.012 240);
+        --foreground: oklch(0.97 0.004 240);
+        --card: oklch(0.2 0.014 240);
+        --card-foreground: oklch(0.97 0.004 240);
+        --primary: oklch(0.78 0.17 162);
+        --primary-foreground: oklch(0.18 0.03 165);
+        --secondary: oklch(0.24 0.014 240);
+        --secondary-foreground: oklch(0.97 0.004 240);
+        --muted: oklch(0.24 0.014 240);
+        --muted-foreground: oklch(0.68 0.015 240);
+        --accent: oklch(0.8 0.13 195);
+        --accent-foreground: oklch(0.18 0.03 200);
+        --border: oklch(0.99 0 0 / 9%);
+        --input: oklch(0.99 0 0 / 12%);
+        --ring: oklch(0.78 0.17 162);
+        --radius: 0.875rem;
+      }
+
+      body {
+        background-color: var(--background);
+        color: var(--foreground);
+      }
+
+      .bg-grid {
+        background-image: linear-gradient(
+            to right,
+            oklch(0.99 0 0 / 4%) 1px,
+            transparent 1px
+          ),
+          linear-gradient(to bottom, oklch(0.99 0 0 / 4%) 1px, transparent 1px);
+        background-size: 44px 44px;
+      }
+
+      .glass {
+        background: linear-gradient(
+          180deg,
+          oklch(0.99 0 0 / 6%),
+          oklch(0.99 0 0 / 2%)
+        );
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+      }
+
+      .text-glow {
+        text-shadow: 0 0 24px oklch(0.78 0.17 162 / 45%);
+      }
+
+      .shadow-primary-glow {
+        box-shadow: 0 0 32px -8px oklch(0.78 0.17 162 / 70%);
+      }
+
+      [id] {
+        scroll-margin-top: 5rem;
+      }
+      html {
+        scroll-behavior: smooth;
+      }
+    </style>
+  </head>
+
+  <body class="font-sans antialiased">
+    <!-- ===== Header ===== -->
+    <header class="fixed inset-x-0 top-0 z-50 border-b border-border/60 glass">
+      <div class="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+        <a href="#hero" class="flex items-center gap-2.5">
+          <span
+            class="flex size-8 items-center justify-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/30"
+          >
+            <!-- recycle -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/><path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096"/></svg>
+          </span>
+          <span class="font-mono text-sm font-semibold tracking-tight">
+            Eco<span class="text-primary">Cycle</span>
+          </span>
+        </a>
+
+        <nav class="hidden items-center gap-1 md:flex">
+          <a href="#hero" class="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">Home</a>
+          <a href="#metrik" class="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">Metrics</a>
+          <a href="#manfaat" class="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">Benefits</a>
+          <a href="#donasi" class="rounded-md px-3 py-2 text-sm text-muted-foreground transition-colors hover:bg-secondary hover:text-foreground">Donate</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <span class="hidden items-center gap-2 rounded-full border border-border bg-secondary/50 px-3 py-1.5 text-xs text-muted-foreground sm:flex">
+            <span class="size-1.5 animate-pulse rounded-full bg-primary"></span>
+            Network active
+          </span>
+          <a href="#donasi" class="flex items-center gap-2 rounded-lg bg-primary px-4 py-2 text-sm font-medium text-primary-foreground shadow-primary-glow transition-transform hover:-translate-y-0.5">
+            <!-- wallet -->
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 7V4a1 1 0 0 0-1-1H5a2 2 0 0 0 0 4h15a1 1 0 0 1 1 1v4h-3a2 2 0 0 0 0 4h3a1 1 0 0 0 1-1v-2a1 1 0 0 0-1-1"/><path d="M3 5v14a2 2 0 0 0 2 2h15a1 1 0 0 0 1-1v-4"/></svg>
+            Connect
+          </a>
+        </div>
+      </div>
+    </header>
+
+    <main>
+      <!-- ===== Hero ===== -->
+      <section id="hero" class="relative overflow-hidden pt-28 pb-16 md:pt-36 md:pb-24">
+        <div class="pointer-events-none absolute inset-0 -z-10 bg-grid" style="mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black, transparent); -webkit-mask-image: radial-gradient(ellipse 70% 60% at 50% 0%, black, transparent);"></div>
+        <div class="pointer-events-none absolute left-1/2 top-0 -z-10 h-[420px] w-[720px] -translate-x-1/2 rounded-full bg-primary/15 blur-[120px]"></div>
+
+        <div class="mx-auto grid max-w-7xl grid-cols-1 items-center gap-12 px-6 lg:grid-cols-12">
+          <div class="lg:col-span-6">
+            <span class="inline-flex items-center gap-2 rounded-full border border-primary/25 bg-primary/10 px-3 py-1.5 font-mono text-xs uppercase tracking-widest text-primary">
+              <!-- leaf -->
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/></svg>
+              Regenerative Protocol
+            </span>
+
+            <h1 class="mt-6 text-balance text-4xl font-semibold tracking-tight sm:text-5xl lg:text-6xl">
+              Your old gadgets, <br class="hidden sm:block" />
+              <span class="text-primary text-glow">new assets</span> for the planet.
+            </h1>
+
+            <p class="mt-6 max-w-xl text-pretty text-lg leading-relaxed text-muted-foreground">
+              Track every kilogram of electronic waste you save with full transparency.
+              Donate your used devices, and let our protocol recycle them into measurable
+              impact.
+            </p>
+
+            <div class="mt-8 flex flex-col gap-3 sm:flex-row">
+              <a href="#donasi" class="inline-flex items-center justify-center gap-2 rounded-lg bg-primary px-6 py-3.5 font-medium text-primary-foreground shadow-primary-glow transition-transform hover:-translate-y-0.5">
+                Donate Now
+                <!-- arrow-up-right -->
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 7h10v10"/><path d="M7 17 17 7"/></svg>
+              </a>
+              <a href="#metrik" class="inline-flex items-center justify-center gap-2 rounded-lg border border-border bg-secondary/40 px-6 py-3.5 font-medium text-foreground transition-colors hover:bg-secondary">
+                View Metrics
+              </a>
+            </div>
+
+            <div class="mt-10 flex items-center gap-8 border-t border-border/60 pt-6">
+              <div>
+                <p class="font-mono text-xl font-semibold tracking-tight">12.4k</p>
+                <p class="mt-0.5 text-xs text-muted-foreground">Contributors</p>
+              </div>
+              <div>
+                <p class="font-mono text-xl font-semibold tracking-tight">1.2M kg</p>
+                <p class="mt-0.5 text-xs text-muted-foreground">E-waste saved</p>
+              </div>
+              <div>
+                <p class="font-mono text-xl font-semibold tracking-tight">99.8%</p>
+                <p class="mt-0.5 text-xs text-muted-foreground">Material recovered</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Signature dashboard panel -->
+          <div class="lg:col-span-6">
+            <div class="relative mx-auto max-w-md rounded-3xl border border-border glass p-6 shadow-2xl">
+              <div class="flex items-start justify-between">
+                <div>
+                  <p class="font-mono text-xs uppercase tracking-widest text-muted-foreground">E-Waste Tracker</p>
+                  <p class="mt-1 text-sm text-muted-foreground">This month</p>
+                </div>
+                <span class="inline-flex items-center gap-1.5 rounded-full bg-primary/15 px-2.5 py-1 font-mono text-xs text-primary ring-1 ring-primary/25">
+                  <!-- trending-up -->
+                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 7h6v6"/><path d="m22 7-8.5 8.5-5-5L2 17"/></svg>
+                  +18.2%
+                </span>
+              </div>
+
+              <div class="mt-6">
+                <p class="font-mono text-4xl font-semibold tracking-tight">
+                  1,240<span class="ml-1 text-lg text-muted-foreground">kg</span>
+                </p>
+                <p class="mt-1 text-sm text-muted-foreground">Electronic waste successfully saved.</p>
+              </div>
+
+              <div id="hero-bars" class="mt-6 flex h-28 items-end gap-1.5" aria-hidden="true"></div>
+
+              <div class="mt-6 space-y-2">
+                <div class="h-2 w-full overflow-hidden rounded-full bg-secondary">
+                  <div class="h-full w-4/5 rounded-full bg-gradient-to-r from-primary to-accent"></div>
+                </div>
+                <div class="flex justify-between font-mono text-xs text-muted-foreground">
+                  <span>Target: 1,500 kg</span>
+                  <span class="text-primary">80% reached</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Metrics ===== -->
+      <section id="metrik" class="border-y border-border/60 py-16 md:py-20">
+        <div class="mx-auto max-w-7xl px-6">
+          <div class="mb-8 flex items-end justify-between">
+            <div>
+              <p class="font-mono text-xs uppercase tracking-widest text-primary">Live Metrics</p>
+              <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">Network impact in real-time</h2>
+            </div>
+            <span class="hidden items-center gap-2 rounded-full border border-border px-3 py-1.5 font-mono text-xs text-muted-foreground sm:inline-flex">
+              <span class="size-1.5 animate-pulse rounded-full bg-primary"></span>
+              Synced 12s ago
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            <!-- Total Processed -->
+            <div class="group rounded-2xl border border-border glass p-5 transition-colors hover:border-primary/40">
+              <div class="flex items-center justify-between">
+                <span class="flex size-9 items-center justify-center rounded-lg bg-primary/12 text-primary ring-1 ring-primary/20">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/><path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096"/></svg>
+                </span>
+                <span class="font-mono text-xs text-primary">+18.2%</span>
+              </div>
+              <p class="mt-4 font-mono text-2xl font-semibold tracking-tight">1,240.8<span class="ml-1 text-sm font-normal text-muted-foreground">kg</span></p>
+              <p class="mt-1 text-sm text-muted-foreground">Total Processed</p>
+            </div>
+
+            <!-- Devices -->
+            <div class="group rounded-2xl border border-border glass p-5 transition-colors hover:border-primary/40">
+              <div class="flex items-center justify-between">
+                <span class="flex size-9 items-center justify-center rounded-lg bg-primary/12 text-primary ring-1 ring-primary/20">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20v2"/><path d="M12 2v2"/><path d="M17 20v2"/><path d="M17 2v2"/><path d="M2 12h2"/><path d="M2 17h2"/><path d="M2 7h2"/><path d="M20 12h2"/><path d="M20 17h2"/><path d="M20 7h2"/><path d="M7 20v2"/><path d="M7 2v2"/><rect x="4" y="4" width="16" height="16" rx="2"/><rect x="8" y="8" width="8" height="8" rx="1"/></svg>
+                </span>
+                <span class="font-mono text-xs text-primary">+4.1%</span>
+              </div>
+              <p class="mt-4 font-mono text-2xl font-semibold tracking-tight">8,412<span class="ml-1 text-sm font-normal text-muted-foreground">unit</span></p>
+              <p class="mt-1 text-sm text-muted-foreground">Devices</p>
+            </div>
+
+            <!-- Energy Saved -->
+            <div class="group rounded-2xl border border-border glass p-5 transition-colors hover:border-primary/40">
+              <div class="flex items-center justify-between">
+                <span class="flex size-9 items-center justify-center rounded-lg bg-primary/12 text-primary ring-1 ring-primary/20">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 14a1 1 0 0 1-.78-1.63l9.9-10.2a.5.5 0 0 1 .86.46l-1.92 6.02A1 1 0 0 0 13 10h7a1 1 0 0 1 .78 1.63l-9.9 10.2a.5.5 0 0 1-.86-.46l1.92-6.02A1 1 0 0 0 11 14z"/></svg>
+                </span>
+                <span class="font-mono text-xs text-primary">+9.7%</span>
+              </div>
+              <p class="mt-4 font-mono text-2xl font-semibold tracking-tight">32.6<span class="ml-1 text-sm font-normal text-muted-foreground">MWh</span></p>
+              <p class="mt-1 text-sm text-muted-foreground">Energy Saved</p>
+            </div>
+
+            <!-- CO2 Prevented -->
+            <div class="group rounded-2xl border border-border glass p-5 transition-colors hover:border-primary/40">
+              <div class="flex items-center justify-between">
+                <span class="flex size-9 items-center justify-center rounded-lg bg-primary/12 text-primary ring-1 ring-primary/20">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 16.3c2.2 0 4-1.83 4-4.05 0-1.16-.57-2.26-1.71-3.19S7.29 6.75 7 5.3c-.29 1.45-1.14 2.84-2.29 3.76S3 11.1 3 12.25c0 2.22 1.8 4.05 4 4.05z"/><path d="M12.56 6.6A10.97 10.97 0 0 0 14 3.02c.5 2.5 2 4.9 4 6.5s3 3.5 3 5.5a6.98 6.98 0 0 1-11.91 4.97"/></svg>
+                </span>
+                <span class="font-mono text-xs text-primary">+12.3%</span>
+              </div>
+              <p class="mt-4 font-mono text-2xl font-semibold tracking-tight">54.2<span class="ml-1 text-sm font-normal text-muted-foreground">ton</span></p>
+              <p class="mt-1 text-sm text-muted-foreground">CO&#8322; Prevented</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Benefits ===== -->
+      <section id="manfaat" class="py-20 md:py-28">
+        <div class="mx-auto max-w-7xl px-6">
+          <div class="mx-auto mb-14 max-w-2xl text-center">
+            <p class="font-mono text-xs uppercase tracking-widest text-primary">Why it matters</p>
+            <h2 class="mt-3 text-balance text-3xl font-semibold tracking-tight sm:text-4xl">Every donation is a transaction for the planet</h2>
+            <p class="mt-4 text-pretty text-muted-foreground">Every electronic device you donate makes a major impact in saving our ecosystem.</p>
+          </div>
+
+          <div class="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <!-- ShieldCheck -->
+            <div class="relative overflow-hidden rounded-2xl border border-border glass p-7 transition-colors hover:border-primary/40">
+              <span class="flex size-11 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 13c0 5-3.5 7.5-7.66 8.95a1 1 0 0 1-.67-.01C7.5 20.5 4 18 4 13V6a1 1 0 0 1 1-1c2 0 4.5-1.2 6.24-2.72a1.17 1.17 0 0 1 1.52 0C14.51 3.81 17 5 19 5a1 1 0 0 1 1 1z"/><path d="m9 12 2 2 4-4"/></svg>
+              </span>
+              <h3 class="mt-5 text-lg font-semibold tracking-tight">Reduce Environmental Toxins</h3>
+              <p class="mt-2 leading-relaxed text-muted-foreground">Prevents hazardous heavy metals like lead, mercury, and cadmium from seeping into the soil and polluting our water sources.</p>
+            </div>
+
+            <!-- Coins -->
+            <div class="relative overflow-hidden rounded-2xl border border-border glass p-7 transition-colors hover:border-primary/40">
+              <span class="flex size-11 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/></svg>
+              </span>
+              <h3 class="mt-5 text-lg font-semibold tracking-tight">Conserve Resources</h3>
+              <p class="mt-2 leading-relaxed text-muted-foreground">Recovers valuable materials like gold, copper, and plastic for reuse, reducing the need for new mining.</p>
+            </div>
+
+            <!-- Globe2 -->
+            <div class="relative overflow-hidden rounded-2xl border border-border glass p-7 transition-colors hover:border-primary/40">
+              <span class="flex size-11 items-center justify-center rounded-xl bg-primary/12 text-primary ring-1 ring-primary/20">
+                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.54 15H17a2 2 0 0 0-2 2v4.54"/><path d="M7 3.34V5a3 3 0 0 0 3 3a2 2 0 0 1 2 2c0 1.1.9 2 2 2a2 2 0 0 0 2-2c0-1.1.9-2 2-2h3.17"/><path d="M11 21.95V18a2 2 0 0 0-2-2a2 2 0 0 1-2-2v-1a2 2 0 0 0-2-2H2.05"/><circle cx="12" cy="12" r="10"/></svg>
+              </span>
+              <h3 class="mt-5 text-lg font-semibold tracking-tight">Support the Circular Economy</h3>
+              <p class="mt-2 leading-relaxed text-muted-foreground">Creates an ecosystem where technology is not thrown away, but instead repaired and reused to minimize waste.</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===== Donation form ===== -->
+      <section id="donasi" class="py-20 md:py-28">
+        <div class="mx-auto max-w-4xl px-6">
+          <div class="overflow-hidden rounded-3xl border border-border glass shadow-2xl">
+            <div class="border-b border-border/60 bg-secondary/30 px-8 py-8 md:px-12">
+              <p class="font-mono text-xs uppercase tracking-widest text-primary">Submit transaction</p>
+              <h2 class="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">E-Waste Donation Form</h2>
+              <p class="mt-3 max-w-xl text-muted-foreground">Fill in the details below. Our courier team picks up your electronic waste directly from your home at no cost.</p>
+            </div>
+
+            <!-- Success state (hidden by default) -->
+            <div id="donation-success" class="hidden flex-col items-center gap-4 px-8 py-16 text-center">
+              <span class="flex size-14 items-center justify-center rounded-full bg-primary/15 text-primary ring-1 ring-primary/30">
+                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.801 10A10 10 0 1 1 17 3.335"/><path d="m9 11 3 3L22 4"/></svg>
+              </span>
+              <h3 class="text-xl font-semibold tracking-tight">Donation confirmed</h3>
+              <p class="max-w-sm text-muted-foreground">Your pickup request has been recorded. Our courier will contact you within 24 hours.</p>
+              <button id="reset-btn" type="button" class="mt-2 rounded-lg border border-border bg-secondary/40 px-5 py-2.5 text-sm font-medium transition-colors hover:bg-secondary">Submit another donation</button>
+            </div>
+
+            <!-- Form -->
+            <form id="donation-form" class="space-y-6 px-8 py-10 md:px-12">
+              <div class="grid gap-6 sm:grid-cols-2">
+                <div class="space-y-2">
+                  <label for="name" class="block text-sm font-medium text-foreground">Full Name</label>
+                  <input id="name" type="text" required placeholder="John Doe" class="w-full rounded-xl border border-border bg-secondary/30 px-4 py-3 text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                </div>
+                <div class="space-y-2">
+                  <label for="email" class="block text-sm font-medium text-foreground">Email Address</label>
+                  <input id="email" type="email" required placeholder="johndoe@email.com" class="w-full rounded-xl border border-border bg-secondary/30 px-4 py-3 text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20" />
+                </div>
+              </div>
+
+              <div class="space-y-2">
+                <label class="block text-sm font-medium text-foreground">Device Type</label>
+                <div id="device-types" class="flex flex-wrap gap-2"></div>
+              </div>
+
+              <div class="space-y-2">
+                <label for="address" class="block text-sm font-medium text-foreground">Pickup Address</label>
+                <textarea id="address" required rows="3" placeholder="123 Example St, City..." class="w-full resize-none rounded-xl border border-border bg-secondary/30 px-4 py-3 text-foreground placeholder:text-muted-foreground/60 transition-colors focus:border-primary/50 focus:outline-none focus:ring-2 focus:ring-primary/20"></textarea>
+              </div>
+
+              <button id="submit-btn" type="submit" class="flex w-full items-center justify-center gap-2 rounded-xl bg-primary px-6 py-4 font-semibold text-primary-foreground shadow-primary-glow transition-transform hover:-translate-y-0.5 disabled:opacity-70">
+                <span id="submit-idle" class="flex items-center gap-2">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 18V6a2 2 0 0 0-2-2H4a2 2 0 0 0-2 2v11a1 1 0 0 0 1 1h2"/><path d="M15 18H9"/><path d="M19 18h2a1 1 0 0 0 1-1v-3.65a1 1 0 0 0-.22-.624l-3.48-4.35A1 1 0 0 0 17.52 8H14"/><circle cx="17" cy="18" r="2"/><circle cx="7" cy="18" r="2"/></svg>
+                  Schedule Free Pickup
+                </span>
+                <span id="submit-loading" class="hidden items-center gap-2">
+                  <svg class="animate-spin" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12a9 9 0 1 1-6.219-8.56"/></svg>
+                  Processing&#8230;
+                </span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- ===== Footer ===== -->
+    <footer class="border-t border-border/60 py-10">
+      <div class="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-6 sm:flex-row">
+        <div class="flex items-center gap-2.5">
+          <span class="flex size-7 items-center justify-center rounded-lg bg-primary/15 text-primary ring-1 ring-primary/30">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 19H4.815a1.83 1.83 0 0 1-1.57-.881 1.785 1.785 0 0 1-.004-1.784L7.196 9.5"/><path d="M11 19h8.203a1.83 1.83 0 0 0 1.556-.89 1.784 1.784 0 0 0 0-1.775l-1.226-2.12"/><path d="m14 16-3 3 3 3"/><path d="M8.293 13.596 7.196 9.5 3.1 10.598"/><path d="m9.344 5.811 1.093-1.892A1.83 1.83 0 0 1 11.985 3a1.784 1.784 0 0 1 1.546.888l3.943 6.843"/><path d="m13.378 9.633 4.096 1.098 1.097-4.096"/></svg>
+          </span>
+          <span class="font-mono text-sm font-semibold">Eco<span class="text-primary">Cycle</span></span>
+        </div>
+        <p id="footer-copy" class="font-mono text-xs text-muted-foreground"></p>
+      </div>
+    </footer>
+
+    <script>
+      // Hero bar chart
+      const bars = [38, 52, 44, 68, 60, 82, 74, 95, 88]
+      const barsEl = document.getElementById('hero-bars')
+      bars.forEach((h, i) => {
+        const bar = document.createElement('div')
+        bar.className = 'flex-1 rounded-t bg-gradient-to-t from-primary/30 to-primary'
+        bar.style.height = h + '%'
+        bar.style.opacity = String(0.5 + (i / bars.length) * 0.5)
+        barsEl.appendChild(bar)
+      })
+
+      // Device type selector
+      const deviceTypes = ['Smartphone', 'Laptop', 'Battery', 'Accessories', 'Other']
+      let selectedDevice = 'Smartphone'
+      const deviceWrap = document.getElementById('device-types')
+      const activeCls = 'border-primary/50 bg-primary/15 text-primary'
+      const idleCls =
+        'border-border bg-secondary/30 text-muted-foreground hover:text-foreground'
+
+      function renderDevices() {
+        deviceWrap.innerHTML = ''
+        deviceTypes.forEach((d) => {
+          const btn = document.createElement('button')
+          btn.type = 'button'
+          btn.textContent = d
+          btn.className =
+            'rounded-lg border px-3.5 py-2 text-sm transition-colors ' +
+            (selectedDevice === d ? activeCls : idleCls)
+          btn.addEventListener('click', () => {
+            selectedDevice = d
+            renderDevices()
+          })
+          deviceWrap.appendChild(btn)
+        })
+      }
+      renderDevices()
+
+      // Form submission
+      const form = document.getElementById('donation-form')
+      const success = document.getElementById('donation-success')
+      const submitBtn = document.getElementById('submit-btn')
+      const submitIdle = document.getElementById('submit-idle')
+      const submitLoading = document.getElementById('submit-loading')
+      const resetBtn = document.getElementById('reset-btn')
+
+      form.addEventListener('submit', (e) => {
+        e.preventDefault()
+        submitBtn.disabled = true
+        submitIdle.classList.add('hidden')
+        submitIdle.classList.remove('flex')
+        submitLoading.classList.remove('hidden')
+        submitLoading.classList.add('flex')
+
+        setTimeout(() => {
+          form.classList.add('hidden')
+          success.classList.remove('hidden')
+          success.classList.add('flex')
+        }, 1400)
+      })
+
+      resetBtn.addEventListener('click', () => {
+        form.reset()
+        selectedDevice = 'Smartphone'
+        renderDevices()
+        submitBtn.disabled = false
+        submitLoading.classList.add('hidden')
+        submitLoading.classList.remove('flex')
+        submitIdle.classList.remove('hidden')
+        submitIdle.classList.add('flex')
+        success.classList.add('hidden')
+        success.classList.remove('flex')
+        form.classList.remove('hidden')
+      })
+
+      // Footer year
+      document.getElementById('footer-copy').textContent =
+        '\u00A9 ' +
+        new Date().getFullYear() +
+        ' EcoCycle Protocol \u2014 Clean planet, bright future.'
+    </script>
+  </body>
+</html>
